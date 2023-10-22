@@ -57,4 +57,6 @@ else:
 
 disc_exe = "%s/Discord/Discord"%extracted
 input("About to run executable file %s; press ENTER to continue, CTRL-C to quit"%disc_exe)
-subprocess.run(disc_exe)
+# This will grab your terminal input, but running in background 
+# from within script causes strange behavior
+subprocess.run(disc_exe) 
