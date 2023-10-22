@@ -2,6 +2,7 @@ import requests
 import os
 import urllib.parse
 import tarfile
+import subprocess
 
 GET_URL = "https://discord.com/api/download"
 params = {
@@ -23,13 +24,16 @@ resp = requests.get(GET_URL, params=params, allow_redirects=False)
 #    file.write(resp.read())
 
 file_url = resp.headers['location']
+resp.close()
+
 print(file_url)
 path = urllib.parse.urlparse(file_url).path
 # e.g. /apps/linux/0.0.32/discord-0.0.32.tar.gz
 path_segments = path.split("/")
 file_name = path_segments[-1]
 version = path_segments[-2]
-new_upd = True # should be false outside development
+new_upd = False
+extracted = "./files/%s"%version
 with open("version.txt") as versionfile:
     oldv = versionfile.read()
 if oldv != version:
@@ -43,7 +47,6 @@ if new_upd:
     if not os.path.exists("./files/"):  
        os.mkdir("files")
     archive = "./files/%s"%file_name
-    extracted = "./files/%s"%version
     with open(archive, 'bw') as file:
         file.write(f_resp.content)
     with tarfile.open(archive) as tar:
@@ -51,4 +54,7 @@ if new_upd:
     f_resp.close()
 else:
     print("no new update, starting discord")
-resp.close()
+
+disc_exe = "%s/Discord/Discord"%extracted
+input("About to run executable file %s; press ENTER to continue, CTRL-C to quit"%disc_exe)
+subprocess.run(disc_exe)
