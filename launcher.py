@@ -37,10 +37,13 @@ if oldv != version:
         versionfile.write(version)
 
 if new_upd:
-    print("new update available")
+    print("new update available, download beginning...")
+    f_resp = requests.get(file_url)
+    if not os.path.exists("./files/"):  
+       os.mkdir("files")
+    with open("files/%s"%file_name, 'bw') as file:
+        file.write(f_resp.content)
+    f_resp.close()
 else:
     print("no new update, starting discord")
-# f_resp = requests.get(new_url)
-# print(f_resp.headers)
-# f_resp.close()
 resp.close()
