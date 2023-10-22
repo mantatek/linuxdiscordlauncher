@@ -1,6 +1,7 @@
 import requests
 import os
 import urllib.parse
+import tarfile
 
 GET_URL = "https://discord.com/api/download"
 params = {
@@ -28,7 +29,7 @@ path = urllib.parse.urlparse(file_url).path
 path_segments = path.split("/")
 file_name = path_segments[-1]
 version = path_segments[-2]
-new_upd = False
+new_upd = True # should be false outside development
 with open("version.txt") as versionfile:
     oldv = versionfile.read()
 if oldv != version:
@@ -41,8 +42,12 @@ if new_upd:
     f_resp = requests.get(file_url)
     if not os.path.exists("./files/"):  
        os.mkdir("files")
-    with open("files/%s"%file_name, 'bw') as file:
+    archive = "./files/%s"%file_name
+    extracted = "./files/%s"%version
+    with open(archive, 'bw') as file:
         file.write(f_resp.content)
+    with tarfile.open(archive) as tar:
+        tar.extractall(extracted)
     f_resp.close()
 else:
     print("no new update, starting discord")
