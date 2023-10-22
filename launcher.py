@@ -1,4 +1,6 @@
 import requests
+import os
+import urllib.parse
 
 GET_URL = "https://discord.com/api/download"
 params = {
@@ -16,14 +18,28 @@ params = {
 
 
 resp = requests.get(GET_URL, params=params, allow_redirects=False)
-print(resp)
 # with open('thing.tar.gz', 'bw') as file:
 #    file.write(resp.read())
-print(resp.status_code)
-print(resp.headers)
-print(resp.reason)
 
-new_url = resp.headers['location']
+file_url = resp.headers['location']
+print(file_url)
+path = urllib.parse.urlparse(file_url).path
+# e.g. /apps/linux/0.0.32/discord-0.0.32.tar.gz
+path_segments = path.split("/")
+file_name = path_segments[-1]
+version = path_segments[-2]
+new_upd = False
+with open("version.txt") as versionfile:
+    oldv = versionfile.read()
+if oldv != version:
+    new_upd = True
+    with open("version.txt", 'w') as versionfile:
+        versionfile.write(version)
+
+if new_upd:
+    print("new update available")
+else:
+    print("no new update, starting discord")
 # f_resp = requests.get(new_url)
 # print(f_resp.headers)
 # f_resp.close()

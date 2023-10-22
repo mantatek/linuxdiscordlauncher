@@ -1,7 +1,5 @@
 .env
-
 __pycache__
-
 *.tar.gz
-
 Pipfile.lock
+*.txt
